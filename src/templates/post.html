@@ -1,0 +1,69 @@
+{% extends 'navbar.html' %}
+{% block content %}
+        <!-- Page header with logo and tagline-->
+        <header class="py-5 bg-light border-bottom mb-4">
+            <div class="container">
+                <div class=" my-5">
+                    <div class="card mb-4">
+                        {% if post.thumbnail %}
+                        <img class="card-img-top" src="{{post.thumbnail.url}}" alt="{{post.author}} thumbnail"  style="max-height: 20vw; max-width: 20vw;">
+                         {% endif %}
+                        <div class="card-body">
+                            <div class="small text-muted">{{post.timestamp|timesince}} ago</div>
+                            <div class="small text-muted">Author {{post.author}}</div>
+                            <h4 class="card-title">{{post.title}}</h4>
+                            {{post.content|safe}}
+                        </div>
+                    </div>
+                    <div>
+                        {% if request.user == post.author.user %}
+                         <a class="btn btn-primary" href="{% url 'post-update' id=post.id %}">Update </a>
+                         <a class="btn btn-primary" href="{% url 'post-delete' id=post.id %}">Delete</a>
+                         {% endif %}
+
+                    </div>
+                    <div>
+                          <!-- Featured blog post-->
+                    <div class="mt-4">
+                        <div class="mx-2 text-capitalize"><p style="font-size: large;">{{post.comments.count}} comment{% if post.comments.count > 1 %}s{% endif %}</p></div>
+                    </div>
+                    {% for comment in post.get_comments %}
+                    <div class="card my-1" >
+                        <div class="card-body">
+                            <div class="small text-muted">{{comment.timestamp|timesince}} ago</div>
+                            <p class="card-text" style="margin-bottom: -0.25%;"><strong>{{comment.user.username}}</strong>:</p>
+                            <p class="card-text">{{comment.content}}</p>
+                            
+                        </div>
+                    </div>
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Page content-->
+        <div class="container">
+            <div class="row">
+                <!-- Blog entries-->
+                {% if request.user.is_authenticated %}
+                <div class="col-lg-6 mt-2">
+                    <!-- Search widget-->
+                    <div class="add-comment">
+                        <div class="card-body">
+                            <form action="." method="POST" >
+                                {% csrf_token %}
+                                <div class="form-group col-md-12 my-2">
+                                    {{ form }}
+                                </div>
+                                <button class="btn btn-primary" id="button-search" type="submit">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        
+
+{% endblock content %}

@@ -18,12 +18,13 @@
             <!-- Featured blog post-->
             
             <div class="card mb-4">
-                <a href="#!"><img class="card-img-top" src="{{object.thumbnail.url}}" alt="..." / ></a>
+                {% if post.thumbnail %}
+                <img class="card-img-top" src="{{post.thumbnail.url}}" alt="{{post.author}} thumbnail"  style="max-height: 20vw; max-width: 20vw;">
+                 {% endif %}
                 <div class="card-body">
                     <div class="small text-muted">{{object.timestamp|timesince}} ago</div>
                     <div class="small text-muted">{{object.comment_count}} comments</div>
                     <h2 class="card-title">{{object.title}}</h2>
-                    <p class="card-text">{{object.overview}}</p>
                     <a class="btn btn-primary" href="#!">Read more →</a>
                 </div>
             </div>

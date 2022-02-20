@@ -43,16 +43,17 @@
                 {% if object.thumbnail %}
                 <a href="#!"><img class="card-img-top" src="{{object.thumbnail.url}}" alt="..."  style="max-height: 20vw; max-width: 20vw;" ></a>
                 {% endif %}
+                <a class="" href="{{ object.get_absolute_url }}" style="text-decoration: none; color: inherit;">
                 <div class="card-body">
                     <div class="small text-muted">{{object.timestamp|timesince}} ago</div>
                     <div class="small text-muted">Author {{object.author}}</div>
                     
                     <div class="small text-muted">{{object.comments.count}} comment{% if post.comments.count > 1 %}s{% endif %}</div>
                     <h2 class="card-title">{{object.title}}</h2>
-                    <p class="card-text">{{object.overview}}</p>
-                    <a class="btn btn-primary" href="{{ object.get_absolute_url }}">Read more →</a>
+                    {% comment %} <a class="btn btn-primary" href="{{ object.get_absolute_url }}">Read more →</a> {% endcomment %}
                 </div>
             </div>
+        </a>
             {% endfor %}
             </div>
             <!-- Pagination-->

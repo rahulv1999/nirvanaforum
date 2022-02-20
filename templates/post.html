@@ -1,13 +1,72 @@
 {% extends 'navbar.html' %}
 {% block content %}
+<style>
+    html,
+    body {
+        position: relative;
+        height: 100%;
+    }
+
+    body {
+        background: #eee;
+        font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        color: #000;
+        margin: 0;
+        padding: 0;
+    }
+
+    .swiper {
+        width: 100%;
+        height: 100%;
+    }
+
+    .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+
+        /* Center slide text vertically */
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+
+    .swiper-slide img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    </style>
+    
         <!-- Page header with logo and tagline-->
         <header class="py-5 bg-light border-bottom mb-4">
-            <div class="container">
+            <div class="container" style="width: 50vw;">
                 <div class=" my-5">
                     <div class="card mb-4">
-                        {% if post.thumbnail %}
-                        <img class="card-img-top" src="{{post.thumbnail.url}}" alt="{{post.author}} thumbnail"  style="max-height: 20vw; max-width: 20vw;">
-                         {% endif %}
+                        <div class="swiper mySwiper">
+                            <div class="swiper-wrapper">
+                                {% for img,n in queryset %}
+                              <div class="swiper-slide"> 
+                                <img src="{{img.thumbnail.url}}" >
+                                <!-- {{img.thumbnail.url}} -->
+                              </div>
+                                {% endfor %}
+                            </div>
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                        </div>
+                    
                         <div class="card-body">
                             <div class="small text-muted">{{post.timestamp|timesince}} ago</div>
                             <div class="small text-muted">Author {{post.author}}</div>
@@ -31,6 +90,7 @@
                     <div class="card my-1" >
                         <div class="card-body">
                             <div class="small text-muted">{{comment.timestamp|timesince}} ago</div>
+                            <i class="bi bi-reply"></i>
                             <p class="card-text" style="margin-bottom: -0.25%;"><strong>{{comment.user.username}}</strong>:</p>
                             <p class="card-text">{{comment.content}}</p>
                             
@@ -42,28 +102,34 @@
             </div>
         </header>
         <!-- Page content-->
-        <div class="container">
-            <div class="row">
-                <!-- Blog entries-->
+      
+
                 {% if request.user.is_authenticated %}
-                <div class="col-lg-6 mt-2">
-                    <!-- Search widget-->
-                    <div class="add-comment">
-                        <div class="card-body">
+                <div class="" style="width: 50%; margin:auto">
+                        <div class="" >
                             <form action="." method="POST" >
                                 {% csrf_token %}
-                                <div class="form-group col-md-12 my-2">
+                                <div class="col-md-12 my-2 ml-10">
                                     {{ form }}
                                 </div>
                                 <button class="btn btn-primary" id="button-search" type="submit">Submit</button>
                             </form>
-                        </div>
                     </div>
                 </div>
                 {% endif %}
-            </div>
-        </div>
+            
 
-        
+        <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+        <!-- Initialize Swiper -->
+        <script>
+          var swiper = new Swiper(".mySwiper", {
+            navigation: {
+              nextEl: ".swiper-button-next",
+              prevEl: ".swiper-button-prev",
+            },
+          });
+        </script>
+   
 
 {% endblock content %}

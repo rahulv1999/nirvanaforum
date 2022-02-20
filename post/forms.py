@@ -13,8 +13,7 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ('title','overview','content','thumbnail','categories',)
-
+        fields = ('title','content','categories')
 
 class CommentForm(forms.ModelForm):
     content = forms.CharField(label=False,widget=forms.Textarea(attrs={

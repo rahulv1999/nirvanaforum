@@ -4,31 +4,42 @@ from unicodedata import category
 from django.urls import reverse
 from django.shortcuts import redirect, render,get_list_or_404, get_object_or_404
 from django.core.paginator import PageNotAnInteger,EmptyPage,Paginator
-from .models import Post, Author, Category
+from .models import Post, Author, Category, PostLike, PostView, Images
 from django.db.models import Q
 from .forms import CommentForm,PostForm
-
+from PIL import Image
+# from StringIO import StringIO
 
 def get_author(user):
     qs = Author.objects.filter(user=user)
-
     if qs.exists():
         return qs[0]
     return None 
 
 def search(request):
-    queryset = Post.objects.all()
+    queryset = Post.objects.order_by('-timestamp')
     query = request.GET.get('q')
     if query:
         queryset = queryset.filter(
             Q(title__icontains=query) |
             Q(overview__icontains=query) 
         ).distinct()
+    paginator = Paginator(queryset,5)
+    page_request_var = 'page'
+    page = request.GET.get(page_request_var)
+    try:
+        paginated_queryset = paginator.page(page)
 
+    except PageNotAnInteger :
+        paginated_queryset = paginator.page(1)
+    except EmptyPage:
+        paginated_queryset = paginator.page(paginator.num_pages)
     context = {
-        'querysetSearch' : queryset,
+        'querysetSearch' : paginated_queryset,
+        'page_request_var' : page_request_var,
         'searchText' : query,
     }
+
     return render(request,'search_results.html',context)
 
 
@@ -68,18 +79,23 @@ def blog(request):
 def post(request,id):
     post = get_list_or_404(Post, id=id)[0]
     form = CommentForm(request.POST or None)
-    
+    thumbnail = Images.objects.filter(post=post)
+
     if request.method == "POST" : 
         if form.is_valid():
             form.instance.user = request.user
             form.instance.post = post
-            
             form.save()
+            
             return redirect("post-detail",id=post.id)
     context = {
         'post' : post,
-        'form' : form
+        'form' : form,
+        'queryset' : zip(thumbnail,range(1,thumbnail.count()+1)),
     }
+
+    if request.user.is_authenticated:
+        PostView.objects.get_or_create(user=request.user, post=post)
     return render(request,'post.html',context)
 
 
@@ -108,14 +124,24 @@ def post_create(request):
     if not request.user.is_authenticated:
         return redirect("post-list")
     title = "Create"
-    form = PostForm(request.POST or None, request.FILES or None)
+    form = PostForm(request.POST or None)    
     author = get_author(request.user)
+    
+    if not author : 
+        author = Author(user=request.user)
+        author.save()
+
     if request.method == "POST":
-        # print(request,2,form)
+        print(request.FILES,request)
+        imageslist = request.FILES.getlist('imagesUpload')
+
         if form.is_valid():
             form.instance.author = author
             form.instance.feature = False
             form.save()
+            for img in imageslist:
+                Images.objects.create(thumbnail=img,post=form.instance)
+
             return redirect(reverse("post-detail", kwargs={
                 'id': form.instance.id
             }))

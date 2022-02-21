@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from cProfile import label
 from pickle import TRUE
 from tkinter import CASCADE
@@ -10,6 +11,17 @@ from PIL import Image
 # Create your models here
 
 User = get_user_model()
+
+class Account(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    gender = models.CharField(
+        max_length=6,
+        choices=[('MALE', 'MALE'), ('FEMALE','FEMALE')]
+    )
+    twitter_Username = models.CharField(default="",blank=True,max_length=100)
+    profile_picture = models.ImageField(blank=True)
+    def __str__(self):
+        return self.user.username
 
 class PostLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -64,7 +76,7 @@ class Post(models.Model):
 
     @property
     def get_comments(self):
-        return self.comments.all().order_by('-timestamp')
+        return self.comments.filter(parent__isnull=True).order_by('-timestamp')
     
     @property
     def view_count(self):
@@ -97,6 +109,12 @@ class Comment(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     content = models.TextField()
     post = models.ForeignKey(Post,related_name='comments',on_delete=models.CASCADE)
+    parent = models.ForeignKey('self',on_delete=models.CASCADE,null=True)
 
     def  __str__(self):
         return self.user.username
+
+    @property
+    def get_reply(self):
+        return Comment.objects.filter(parent=self)
+

@@ -1,19 +1,10 @@
 {% extends 'navbar.html' %}
 {% block content %}
-<style>
+    <style>
     html,
     body {
         position: relative;
         height: 100%;
-    }
-
-    body {
-        background: #eee;
-        font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-        font-size: 14px;
-        color: #000;
-        margin: 0;
-        padding: 0;
     }
 
     .swiper {
@@ -48,79 +39,121 @@
         object-fit: cover;
     }
     </style>
-    
-        <!-- Page header with logo and tagline-->
-        <header class="py-5 bg-light border-bottom mb-4">
-            <div class="container" style="width: 50vw;">
-                <div class=" my-5">
-                    <div class="card mb-4">
-                        <div class="swiper mySwiper">
-                            <div class="swiper-wrapper">
-                                {% for img,n in queryset %}
-                              <div class="swiper-slide"> 
-                                <img src="{{img.thumbnail.url}}" >
-                                <!-- {{img.thumbnail.url}} -->
-                              </div>
-                                {% endfor %}
-                            </div>
-                            <div class="swiper-button-next"></div>
-                            <div class="swiper-button-prev"></div>
+    <!-- Page header with logo and tagline-->
+    <header class="py-5 bg-light border-bottom mb-4">
+        <div class="container" style="width: 50vw;">
+            <div class=" my-5">
+                <div class="card mb-4">
+                    <div class="swiper mySwiper">
+                        <div class="swiper-wrapper">
+                            {% for img in queryset %}
+                                <div class="swiper-slide">
+                                    <img src="{{ img.thumbnail.url }}" style="height: 50vh;">
+                                    <!-- {{img.thumbnail.url}} -->
+                                </div>
+                            {% endfor %}
                         </div>
-                    
-                        <div class="card-body">
-                            <div class="small text-muted">{{post.timestamp|timesince}} ago</div>
-                            <div class="small text-muted">Author {{post.author}}</div>
-                            <h4 class="card-title">{{post.title}}</h4>
-                            {{post.content|safe}}
-                        </div>
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
                     </div>
-                    <div>
-                        {% if request.user == post.author.user %}
-                         <a class="btn btn-primary" href="{% url 'post-update' id=post.id %}">Update </a>
-                         <a class="btn btn-primary" href="{% url 'post-delete' id=post.id %}">Delete</a>
-                         {% endif %}
-
+                    <div class="card-body">
+                        <div class="small text-muted">{{ post.timestamp|timesince }} ago</div>
+                        <div class="small text-muted">Author {{ post.author }}</div>
+                        <h4 class="card-title">{{ post.title }}</h4>
+                        {{ post.content|safe }}
                     </div>
-                    <div>
-                          <!-- Featured blog post-->
+                </div>
+                <div>
+                    {% if request.user == post.author.user %}
+                        <a class="btn btn-primary" href="{% url 'post-update' id=post.id %}">Update</a>
+                        <a class="btn btn-primary" href="{% url 'post-delete' id=post.id %}">Delete</a>
+                    {% endif %}
+                </div>
+                <div>
+                    <!-- Featured blog post-->
                     <div class="mt-4">
-                        <div class="mx-2 text-capitalize"><p style="font-size: large;">{{post.comments.count}} comment{% if post.comments.count > 1 %}s{% endif %}</p></div>
-                    </div>
-                    {% for comment in post.get_comments %}
-                    <div class="card my-1" >
-                        <div class="card-body">
-                            <div class="small text-muted">{{comment.timestamp|timesince}} ago</div>
-                            <i class="bi bi-reply"></i>
-                            <p class="card-text" style="margin-bottom: -0.25%;"><strong>{{comment.user.username}}</strong>:</p>
-                            <p class="card-text">{{comment.content}}</p>
-                            
+                        <div class="mx-2 text-capitalize">
+                            <p style="font-size: large;">
+                                {{ post.comments.count }} comment
+                                {% if post.comments.count > 1 %}s{% endif %}
+                            </p>
                         </div>
                     </div>
+                    <hr>
+                    {% for comment in post.get_comments %}
+                        <div class="card my-0 border-0">
+                            <div class="card-body ">
+                                <div class="small text-muted">{{ comment.timestamp|timesince }} ago</div>
+                                <p class="card-text" style="margin-bottom: -0.25%;">
+                                    <strong>{{ comment.user.username }}</strong>:
+                                </p>
+                                <p class="card-text pb-0">
+                                    {{ comment.content }}
+                                </p>
+                                <a class=""
+                                   data-toggle="collapse"
+                                   href="#comment_{{ comment.id }}"
+                                   role="button"
+                                   aria-expanded="false"
+                                   aria-controls="collapseExample">
+                                    <svg width="24"
+                                         height="24"
+                                         viewBox="0 0 24 24"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="m3 12 9.778-8v5.333c1.926.45 3.5 1.172 4.722 2.167 1.222.995 2.389 2.495 3.5 4.5-1.333-.659-2.833-1.157-4.5-1.496-1.667-.34-2.907-.285-3.722.163V20L3 12Z"
+                                              class="icon_svg-stroke"
+                                              stroke="#666"
+                                              fill="none"
+                                              stroke-width="1.5"
+                                              stroke-linejoin="round">
+                                        </path>
+                                    </svg>
+                                    Reply
+                                </a>
+                            </div>
+                            <div class="collapse card card-body ml-5 border-0"
+                                 id="comment_{{ comment.id }}">
+                                <form action="{% url 'comment-reply' id=comment.id  post_id=comment.post.id %}"
+                                      method="POST">
+                                    {% csrf_token %}
+                                    <div class="col-md-12 my-2 ml-10">
+                                        <input type="text" class="form-control" name="reply_{{ comment.id }}">
+                                    </div>
+                                    <div class="col-md-12 my-2 ml-10">
+                                        <button class="btn btn-primary" id="button-search" type="submit">Reply</button>
+                                    </div>
+                                </form>
+                            </div>
+                            {% for reply in comment.get_reply %}
+                                <div class="card card-body ml-5 border-0">
+                                    <div class="small text-muted">{{ reply.timestamp|timesince }} ago</div>
+                                    <p class="card-text" style="margin-bottom: -0.25%;">
+                                        <strong>{{ reply.user.username }}</strong>:
+                                    </p>
+                                    {{ reply.content }}
+                                </div>
+                            {% endfor %}
+                            <hr>
+                        </div>
                     {% endfor %}
-                    </div>
                 </div>
             </div>
         </header>
         <!-- Page content-->
-      
-
-                {% if request.user.is_authenticated %}
-                <div class="" style="width: 50%; margin:auto">
-                        <div class="" >
-                            <form action="." method="POST" >
-                                {% csrf_token %}
-                                <div class="col-md-12 my-2 ml-10">
-                                    {{ form }}
-                                </div>
-                                <button class="btn btn-primary" id="button-search" type="submit">Submit</button>
-                            </form>
-                    </div>
+        {% if request.user.is_authenticated %}
+            <div class="" style="width: 50%; margin:auto">
+                <div class="">
+                    <form action="." method="POST">
+                        {% csrf_token %}
+                        <div class="col-md-12 my-2 ml-10">{{ form }}</div>
+                        <div class="col-md-12 my-2 ml-10">
+                            <button class="btn btn-primary" id="button-search" type="submit">Submit</button>
+                        </div>
+                    </form>
                 </div>
-                {% endif %}
-            
-
+            </div>
+        {% endif %}
         <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-
         <!-- Initialize Swiper -->
         <script>
           var swiper = new Swiper(".mySwiper", {
@@ -130,6 +163,4 @@
             },
           });
         </script>
-   
-
-{% endblock content %}
+    {% endblock content %}

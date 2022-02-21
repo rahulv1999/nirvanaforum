@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from post.views import index,blog,post,search,post_delete,post_update,post_create,post_cat
+from post.views import index,blog,post,search,post_delete,post_update,post_create,post_cat,reply,register
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,9 +27,11 @@ urlpatterns = [
     path('post/<id>/', post,name='post-detail'),
     path('blog/<id>/', post_cat,name='blog-cat'),
     path('create/', post_create,name='post-create'),
+    path('reply/<post_id>/<id>/', reply,name='comment-reply'),
     path('post/<id>/update/', post_update,name='post-update'), 
     path('post/<id>/delete/', post_delete,name='post-delete'),
     path('accounts/', include('allauth.urls'),name='allauth'),
+    path('signup/',register,name="signup-new"),
     path('tinymce/', include('tinymce.urls')),
 ]
 if settings.DEBUG:

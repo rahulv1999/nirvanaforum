@@ -4,9 +4,9 @@ from unicodedata import category
 from django.urls import reverse
 from django.shortcuts import redirect, render,get_list_or_404, get_object_or_404
 from django.core.paginator import PageNotAnInteger,EmptyPage,Paginator
-from .models import Post, Author, Category, PostLike, PostView, Images
+from .models import Post, Author, Category, PostLike, PostView, Images,Comment
 from django.db.models import Q
-from .forms import CommentForm,PostForm
+from .forms import CommentForm,PostForm, UserCreateForm
 from PIL import Image
 # from StringIO import StringIO
 
@@ -69,7 +69,7 @@ def blog(request):
         'queryset' : paginated_queryset,
         'page_request_var' : page_request_var,
         'categories' : categories,
-        'message' : 'Welcome to Blog Post',
+        'message' : 'Welcome to Nirvana Forum',
         'flag' : 1,
     }
 
@@ -86,18 +86,41 @@ def post(request,id):
             form.instance.user = request.user
             form.instance.post = post
             form.save()
-            
-            return redirect("post-detail",id=post.id)
+
     context = {
         'post' : post,
         'form' : form,
-        'queryset' : zip(thumbnail,range(1,thumbnail.count()+1)),
+        'queryset' : thumbnail,
     }
 
     if request.user.is_authenticated:
         PostView.objects.get_or_create(user=request.user, post=post)
     return render(request,'post.html',context)
 
+def reply(request,id,post_id):
+    post = get_object_or_404(Post, id=post_id)
+    form = CommentForm(request.POST or None)
+    thumbnail = Images.objects.filter(post=post)
+
+    if request.method == "POST" : 
+        commentReply = request.POST.get(f'reply_{id}')
+        print(commentReply)
+        Comment.objects.create(
+            user = request.user,
+            content = commentReply,
+            post = post,
+            parent = Comment.objects.get(id=id)
+        )
+        return redirect("post-detail",id=post.id)
+    context = {
+        'post' : post,
+        'form' : form,
+        'queryset' : thumbnail,
+    }
+
+    if request.user.is_authenticated:
+        PostView.objects.get_or_create(user=request.user, post=post)
+    return render(request,'post.html',context) 
 
 def post_cat(request,id):
     cat = get_object_or_404(Category,id=id)
@@ -178,6 +201,20 @@ def post_delete(request,id):
     post.delete()
     return redirect(reverse("post-list"))
 
+
+
+def register(request):
+    form = UserCreateForm(request.POST or None, request.FILES or None)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect(reverse("post-list"))
+    
+    context = {
+        'form' : form,
+    }
+    return render(request,'account/signup.html',context)
+        
 
 
 

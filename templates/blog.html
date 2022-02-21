@@ -16,41 +16,34 @@
             </form>
         </div>
         <div class="card mb-4">
-            <div class="card-header">Categories</div>
+            
             <div class="card-body">
                 <div class="row">
-                    <div class="">
+                    <div class="text-center">
                         
                         {% for catgy in categories %}
                             <a href="{% url 'blog-cat' id=catgy.id %}">{{catgy.title}}</a>
                         {% endfor %}
                     </div>
                 </div>
-            </div>
+            
         </div>
         {% endif %}
     </div>
 </header>
 <!-- Page content-->
 <div class="container " >
-    <div class="row align-items-center">
+    <div class="">
         <!-- Blog entries-->
-        <div class="col-lg-8 ">
+        <div class="">
             {% for object in queryset %}
-            <!-- Featured blog post-->
             
-            <div class="card mb-4 bg-ligh " style="background-color: #FAFAFA">
-                {% if object.thumbnail %}
-                <a href="#!"><img class="card-img-top" src="{{object.thumbnail.url}}" alt="..."  style="max-height: 20vw; max-width: 20vw;" ></a>
-                {% endif %}
-                <a class="" href="{{ object.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-                <div class="card-body">
-                    <div class="small text-muted">{{object.timestamp|timesince}} ago</div>
-                    <div class="small text-muted">Author {{object.author}}</div>
-                    
-                    <div class="small text-muted">{{object.comments.count}} comment{% if post.comments.count > 1 %}s{% endif %}</div>
-                    <h2 class="card-title">{{object.title}}</h2>
-                    {% comment %} <a class="btn btn-primary" href="{{ object.get_absolute_url }}">Read more →</a> {% endcomment %}
+            <div class=" m-1 p-0 bg-ligh ">
+                <a class="" href={% if request.user.is_authenticated %} "{{ object.get_absolute_url }}" {% else %} 
+                "{% url 'account_login' %}" {% endif %}
+                style="text-decoration: none; color: inherit;">
+                <div class=" text-capitalize text-center">
+                    <h4 class="card-title">{{object.title}}</h4>
                 </div>
             </div>
         </a>

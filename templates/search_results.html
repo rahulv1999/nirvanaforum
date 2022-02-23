@@ -14,24 +14,16 @@
 <div class="container " >
     <div class="row align-items-center">
         <!-- Blog entries-->
-        <div class="col-lg-8 ">
+        <div class="">
             {% for object in querysetSearch %}
             <!-- Featured blog post-->
-            <a class="" href="{{ object.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-            <div class="card mb-4 bg-ligh " style="background-color: #FAFAFA">
-                {% if object.thumbnail %}
-                <img class="card-img-top" src="{{object.thumbnail.url}}" alt="..."  style="max-height: 20vw; max-width: 20vw;" >
-                {% endif %}
-                <div class="card-body">
-                    <div class="small text-muted">{{object.timestamp|timesince}} ago</div>
-                    <div class="small text-muted">Author {{object.author}}</div>
-
-                    <div class="small text-muted">{{object.comments.count}} comment{% if post.comments.count > 1 %}s{% endif %}</div>
-                    <h2 class="card-title">{{object.title}}</h2>
-
+            <div class=" m-1 p-0 bg-ligh ">
+                <a class="" href={% if request.user.is_authenticated %} "{{ object.get_absolute_url }}" {% else %} "{% url 'account_login' %}" {% endif %}
+                style="color: inherit;">
+                <div class=" text-capitalize text-center">
+                    <h4 class="card-title">{{object.title}}</h4>
                 </div>
             </div>
-            </a>
             {% endfor %}
             </div>
             <!-- Pagination-->

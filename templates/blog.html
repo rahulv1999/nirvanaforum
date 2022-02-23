@@ -7,6 +7,12 @@
             <h1 class="fw-bolder">{{message}}</h1>
         </div>
         {% if flag %}
+        <div class="container">
+            <marquee direction="right" >
+            <h5>USD = {{currency.0}} EUR | USD = {{currency.1}} GBP | BTC = {{currency.2}} USD | ETH = {{currency.3}} USD | {{currency.4}} | Total Posts {{queryset.0.total_post}}
+                | Total Users {{queryset.0.total_user}}
+            </h5></marquee>
+        </div>
           <div class="card-body  m-auto">
             <form action="{% url 'search' %}">
                 <div class="input-group">
@@ -36,12 +42,17 @@
     <div class="">
         <!-- Blog entries-->
         <div class="">
+            {% if not queryset|length %}
+            <div class="text-center my-5">
+                <h1 class="fw-bolder">No Post yet</h1>
+            </div>
+            
+            {% endif %}
             {% for object in queryset %}
             
             <div class=" m-1 p-0 bg-ligh ">
-                <a class="" href={% if request.user.is_authenticated %} "{{ object.get_absolute_url }}" {% else %} 
-                "{% url 'account_login' %}" {% endif %}
-                style="text-decoration: none; color: inherit;">
+                <a class="" href={% if request.user.is_authenticated %} "{{ object.get_absolute_url }}" {% else %} "{% url 'account_login' %}" {% endif %}
+                style="color: inherit;">
                 <div class=" text-capitalize text-center">
                     <h4 class="card-title">{{object.title}}</h4>
                 </div>

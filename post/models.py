@@ -22,6 +22,17 @@ class Account(models.Model):
     profile_picture = models.ImageField(blank=True)
     def __str__(self):
         return self.user.username
+    
+    def save(self, *args,**kwargs):
+        super().save(*args, **kwargs)
+        try:
+            img = Image.open(self.profile_picture.path)
+            if img.height>500 or img.weight>500:
+                output_size = (200,200)
+                img.thumbnail(output_size)
+                img.save(self.profile_picture.path)
+        except:
+            pass
 
 class PostLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -86,6 +97,14 @@ class Post(models.Model):
     def like_count(self):
         return PostLike.objects.filter(post=self).count()
 
+    @property
+    def total_post(self):
+        return Post.objects.count()
+
+    @property    
+    def total_user(self):
+        return User.objects.count()
+
     
 
 class Images(models.Model):
@@ -117,4 +136,30 @@ class Comment(models.Model):
     @property
     def get_reply(self):
         return Comment.objects.filter(parent=self)
+
+    @property
+    def get_gender(self):
+        querySet = Account.objects.filter(user=self.user) 
+        if len(querySet):
+            return querySet[0].gender
+        return None
+    
+    @property
+    def get_dp(self):
+        querySet = Account.objects.filter(user=self.user) 
+        if len(querySet):
+            return querySet[0].profile_picture
+        return None
+
+class homeData(models.Model):
+    timestamp = models.DateTimeField(auto_now_add=True)
+    btc = models.DecimalField(max_digits=15,decimal_places=3)
+    eth = models.DecimalField(max_digits=15,decimal_places=3)
+    eur = models.DecimalField(max_digits=15,decimal_places=3)
+    gbp = models.DecimalField(max_digits=15,decimal_places=3)
+
+    def __str__(self):
+        return self.timestamp
+
+
 

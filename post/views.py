@@ -95,14 +95,17 @@ def blog(request):
                 gbp = d['GBP']
             )
         else :
-            btc = json.dumps(float(homedata[0].btc)),
-            eth = json.dumps(float(homedata[0].eth)),
-            eur = json.dumps(float(homedata[0].eur)),
-            gbp = json.dumps(float(homedata[0].gbp))
+            # btc = json.dumps(float(homedata[0].btc))
+            # eth = json.dumps(float(homedata[0].eth))
+            # eur = json.dumps(float(homedata[0].eur))
+            # gbp = json.dumps(float(homedata[0].gbp))
+            gbp = round(1/homedata[0].gbp,2)
+            eur = round(1/homedata[0].eur,2)
+            btc = homedata[0].btc
+            eth = homedata[0].eth
 
 
-    currency = [eur[0],gbp[0],btc[0],eth[0],today]
-
+    currency = [eur,gbp,btc,eth,today]
 
     try:
         paginated_queryset = paginator.page(page)

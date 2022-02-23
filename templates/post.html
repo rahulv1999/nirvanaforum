@@ -59,15 +59,17 @@
                     </div>
                     <div class="card-body">
                         <div class="small text-muted">{{ post.timestamp|timesince }} ago</div>
-                        <div class="small text-muted">Author {{ post.author }}</div>
+                        <div class="small text-muted">by {{ post.author }}</div>
                         <h4 class="card-title">{{ post.title }}</h4>
                         {{ post.content|safe }}
                     </div>
                 </div>
                 <div>
                     {% if request.user == post.author.user %}
-                        <a class="btn btn-primary" href="{% url 'post-update' id=post.id %}">Update</a>
-                        <a class="btn btn-primary" href="{% url 'post-delete' id=post.id %}">Delete</a>
+                        <a class="btn btn-primary" href="{% url 'post-update' id=post.id %}" style="background-color: #d2d6a8;
+                        border: #d2d6a8;">Update</a>
+                        <a class="btn btn-primary" href="{% url 'post-delete' id=post.id %}" style="background-color: #d2d6a8;
+                        border: #d2d6a8;">Delete</a>
                     {% endif %}
                 </div>
                 <div>
@@ -103,12 +105,12 @@
                                 <p class="card-text pb-0">
                                     {{ comment.content }}
                                 </p>
-                                <a class=""
+                                <a class="text-secondary"
                                    data-toggle="collapse"
                                    href="#comment_{{ comment.id }}"
                                    role="button"
                                    aria-expanded="false"
-                                   aria-controls="collapseExample">
+                                   aria-controls="collapseExample" style="">
                                     <svg width="24"
                                          height="24"
                                          viewBox="0 0 24 24"
@@ -133,7 +135,8 @@
                                         <input type="text" class="form-control" name="reply_{{ comment.id }}">
                                     </div>
                                     <div class="col-md-12 my-2 ml-10">
-                                        <button class="btn btn-primary" id="button-search" type="submit">Reply</button>
+                                        <button class="btn btn-primary" id="button-search" type="submit" style="background-color: #d2d6a8;
+                                        border: #d2d6a8;">Reply</button>
                                     </div>
                                 </form>
                             </div>
@@ -172,7 +175,8 @@
                         {% csrf_token %}
                         <div class="col-md-12 my-2 ml-10">{{ form }}</div>
                         <div class="col-md-12 my-2 ml-10">
-                            <button class="btn btn-primary" id="button-search" type="submit">Submit</button>
+                            <button class="btn btn-primary" id="button-search" type="submit" style="background-color: #d2d6a8;
+                            border: #d2d6a8;">Submit</button>
                         </div>
                     </form>
                 </div>

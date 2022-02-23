@@ -1,5 +1,14 @@
 {% extends 'navbar.html' %}
 {% block content %}
+
+<style>
+    .btn-primary {
+        background-color: #d2d6a8;
+        border: #d2d6a8;
+    }
+    
+</style>
+
 <!-- Page header with logo and tagline-->
 <header class="py-5 bg-light border-bottom mb-4">
     <div class="container">
@@ -9,7 +18,7 @@
         {% if flag %}
         <div class="container">
             <marquee direction="right" >
-            <h5>USD = {{currency.0}} EUR | USD = {{currency.1}} GBP | BTC = {{currency.2}} USD | ETH = {{currency.3}} USD | {{currency.4}} | Total Posts {{queryset.0.total_post}}
+            <h5>EUR = {{currency.0}} USD | GBR = {{currency.1}} USD | BTC = {{currency.2}} USD | ETH = {{currency.3}} USD | {{currency.4}} | Total Posts {{queryset.0.total_post}}
                 | Total Users {{queryset.0.total_user}}
             </h5></marquee>
         </div>
@@ -28,7 +37,7 @@
                     <div class="text-center">
                         
                         {% for catgy in categories %}
-                            <a href="{% url 'blog-cat' id=catgy.id %}">{{catgy.title}}</a>
+                            <a href="{% url 'blog-cat' id=catgy.id %}" class="text-secondary">{{catgy.title}}</a>
                         {% endfor %}
                     </div>
                 </div>
@@ -38,7 +47,7 @@
     </div>
 </header>
 <!-- Page content-->
-<div class="container " >
+<div class="container" >
     <div class="">
         <!-- Blog entries-->
         <div class="">
@@ -65,11 +74,11 @@
                 <hr class="my-0" />
                 <ul class="pagination justify-content-center my-4" >
                     {% if queryset.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?{{ page_request_var }}={{ queryset.previous_page_number }}" tabindex="-1" >Newer</a></li>
+                    <li class="page-item"><a class="page-link"  href="?{{ page_request_var }}={{ queryset.previous_page_number }}" tabindex="-1" >Newer</a></li>
                     {% endif %} 
-                    <li class="page-item active" aria-current="page"><a class="page-link">{{ queryset.number }}</a></li>
+                    <li class="page-item active" aria-current="page"><a class="page-link" style="border: #d2d6a8; background-color: #d2d6a8;">{{ queryset.number }}</a></li>
                     {% if queryset.has_next %}
-                    <li class="page-item"><a class="page-link" href="?{{ page_request_var }}={{ queryset.next_page_number }}">Older</a></li>
+                    <li class="page-item"><a class="page-link text-muted" href="?{{ page_request_var }}={{ queryset.next_page_number }}">Older</a></li>
                     {% endif %}
                 </ul>
             </nav>

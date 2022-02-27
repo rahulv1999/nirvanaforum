@@ -10,10 +10,12 @@
   }
   
 </style>
-{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+
+
 
 {% block content %}
-<div class="min-vh-100 w-50 m-auto">
+<div class="min-vh-100 w-50 m-auto" >
 
   <div class="container form-control my-5">
   
@@ -55,5 +57,9 @@
     </form>
   </div>
 </div>
+<script>
+let s = document.getElementById("body")
 
+s.style.backgroundColor = "#87a08b"
+</script>
 {% endblock %}

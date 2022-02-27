@@ -6,27 +6,63 @@
         background-color: #d2d6a8;
         border: #d2d6a8;
     }
-    
+    .btn-primary:hover{
+        background-color: #d2d6a8;
+        border: #d2d6a8;
+        text-shadow: 0.5px 0.5px;
+    }
 </style>
 
 <!-- Page header with logo and tagline-->
-<header class="py-5 bg-light border-bottom mb-4">
-    <div class="container">
+<header class="py-5  border-bottom mb-4" style="background-color: #87a08b;">
+    
+    <div class="row">
+        <div class="col-md-2 mx-2 text-center">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Quick Stats</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <th >EUR = {{currency.0}} USD </th>
+                </tr>
+                <tr>
+                    <th >GBR = {{currency.1}} USD </th>
+                </tr>
+                <tr>
+                    <th >BTC = {{currency.2}} USD</th>
+                </tr>
+                <tr>
+                    <th >ETH = {{currency.3}} USD</th>
+                </tr>
+                <tr>
+                    <th >{{currency.4}} </th>
+                </tr>
+                <tr>
+                    <th >Total Posts {{queryset.0.total_post}}</th>
+                </tr>
+                <tr>
+                    <th >Total users {{queryset.0.total_user}}</th>
+                </tr>
+                <tr>
+                    <th >Online users {{request.online_now.count}}</th>
+                </tr>
+            </table>
+    </div>
+    <div class="container col-md-8">
         <div class="text-center my-5">
             <h1 class="fw-bolder">{{message}}</h1>
         </div>
         {% if flag %}
         <div class="container">
-            <marquee direction="right" >
-            <h5>EUR = {{currency.0}} USD | GBR = {{currency.1}} USD | BTC = {{currency.2}} USD | ETH = {{currency.3}} USD | {{currency.4}} | Total Posts {{queryset.0.total_post}}
-                | Total Users {{queryset.0.total_user}}
-            </h5></marquee>
+            
         </div>
           <div class="card-body  m-auto">
             <form action="{% url 'search' %}">
                 <div class="input-group">
                     <input class="form-control" name="q" placeholder="Enter search term..." aria-label="Enter search term..." aria-describedby="button-search" />
-                    <button class="btn btn-primary" id="button-search" type="submit">Go!</button>
+                    <button class="btn btn-primary p-2 " id="button-search" type="submit"><h3>Go!</h3></button>
                 </div>
             </form>
         </div>
@@ -45,12 +81,18 @@
         </div>
         {% endif %}
     </div>
+    </div>
 </header>
 <!-- Page content-->
+
 <div class="container" >
-    <div class="">
+    <div class="" >
+        <div class="text-center my-5">
+            <h1 class="fw-bolder">Featured Post</h1>
+        </div>
         <!-- Blog entries-->
         <div class="">
+
             {% if not queryset|length %}
             <div class="text-center my-5">
                 <h1 class="fw-bolder">No Post yet</h1>
@@ -60,10 +102,10 @@
             {% for object in queryset %}
             
             <div class=" m-1 p-0 bg-ligh ">
-                <a class="" href={% if request.user.is_authenticated %} "{{ object.get_absolute_url }}" {% else %} "{% url 'account_login' %}" {% endif %}
+                <a class="" href="{{ object.get_absolute_url }}" 
                 style="color: inherit;">
                 <div class=" text-capitalize text-center">
-                    <h4 class="card-title">{{object.title}}</h4>
+                    <h5 class="card-title">{{object.title}}</h5>
                 </div>
             </div>
         </a>
@@ -89,10 +131,16 @@
 <script>
     window.onload = function() {
   select();
+  dpload();
 };
 function select(){
     let s = document.getElementById("blognavbar")
     s.className += " active"
+}
+
+function dpload(){
+    let s = document.getElementById("dpnavbar")
+    s.setAttribute("src", "{{dpurl.url}}");
 }
 </script>
 

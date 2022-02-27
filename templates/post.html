@@ -41,7 +41,7 @@
     }
     </style>
     <!-- Page header with logo and tagline-->
-    <header class="py-5 bg-light border-bottom mb-4">
+    <header class="py-5 border-bottom " style="background-color: #87a08b;">
         <div class="container" style="width: 50vw;">
             <div class=" my-5">
                 <div class="card mb-4">
@@ -93,13 +93,26 @@
                                     {% if not comment.get_dp %}
                                     <img src="/media/profile.png" alt="" class="rounded-circle" style="width: 30px; height: 30px;">
                                     {% endif %}
-                                    <strong>{% if comment.get_gender == 'MALE' %}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-male" viewBox="0 0 16 16">
+
+                                    
+                                    {% if comment.user.id in request.online_now_ids %}
+                                    <svg height="10" width="10">
+                                        <circle cx="5" cy="5" r="3" stroke="green" stroke-width="3" fill="green" />
+                                         
+                                      </svg> 
+                                    {% else %}
+                                    <svg height="10" width="10">
+                                        <circle cx="5" cy="5" r="3" stroke="yellow" stroke-width="3" fill="yellow" />
+                                         
+                                      </svg> 
+                                    {% endif %}
+                                    <strong>{{ comment.user.username }} {% if comment.get_gender == 'MALE' %}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-male" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2H9.5zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
                                       </svg>
                                     {% else %}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-female" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M8 1a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5z"/>
                                       </svg>
-                                    {% endif %} {{ comment.user.username }}</strong>:
+                                    {% endif %}</strong>:
                                 </p>
                                 
                                 <p class="card-text pb-0">
@@ -110,7 +123,7 @@
                                    href="#comment_{{ comment.id }}"
                                    role="button"
                                    aria-expanded="false"
-                                   aria-controls="collapseExample" style="">
+                                   aria-controls="collapseExample" >
                                     <svg width="24"
                                          height="24"
                                          viewBox="0 0 24 24"
@@ -127,7 +140,7 @@
                                 </a>
                             </div>
                             <div class="collapse card card-body ml-5 border-0"
-                                 id="comment_{{ comment.id }}">
+                                 id="comment_{{ comment.id }}" >
                                 <form action="{% url 'comment-reply' id=comment.id  post_id=comment.post.id %}"
                                       method="POST">
                                     {% csrf_token %}
@@ -166,22 +179,21 @@
                     {% endfor %}
                 </div>
             </div>
-        </header>
-        <!-- Page content-->
-        {% if request.user.is_authenticated %}
-            <div class="" style="width: 50%; margin:auto">
-                <div class="">
+            <div class="" >
                     <form action="." method="POST">
                         {% csrf_token %}
-                        <div class="col-md-12 my-2 ml-10">{{ form }}</div>
-                        <div class="col-md-12 my-2 ml-10">
-                            <button class="btn btn-primary" id="button-search" type="submit" style="background-color: #d2d6a8;
+                        <div class=" my-2 ml-10">{{ form }}</div>
+                        <div class="my-2 ml-10">
+                            <button class="btn btn-primary " id="button-search" type="submit" style="background-color: #d2d6a8;
                             border: #d2d6a8;">Submit</button>
                         </div>
                     </form>
-                </div>
             </div>
-        {% endif %}
+        </header>
+        <!-- Page content-->
+      
+            
+  
         <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
         <!-- Initialize Swiper -->
         <script>
@@ -191,5 +203,16 @@
               prevEl: ".swiper-button-prev",
             },
           });
+        </script>
+        <script>
+            window.onload = function() {
+          select();
+        
+        };
+        function select(){
+            let s = document.getElementById("postnavbar")
+            s.className += " active"
+        }
+        
         </script>
     {% endblock content %}

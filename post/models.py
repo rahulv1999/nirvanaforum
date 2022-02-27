@@ -12,6 +12,7 @@ from PIL import Image
 
 User = get_user_model()
 
+
 class Account(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     gender = models.CharField(
@@ -33,13 +34,28 @@ class Account(models.Model):
                 img.save(self.profile_picture.path)
         except:
             pass
+    
+    @property
+    def get_dp(self):
+        querySet = self.objects.filter(user=self.user) 
+        if len(querySet):
+            return querySet[0].profile_picture
+        return None
+    
+
 
 class PostLike(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey('Post', on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    post = models.OneToOneField('Post', on_delete=models.CASCADE)
+    gender = models.CharField(
+        max_length=10,
+        choices=[('like', 'like'), 
+                ('neutral','neutral'),
+                ('dislike','dislike')]
+    )
 
     def __str__(self):
-        return self.user.username
+        return self.post.title
 
 class PostView(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

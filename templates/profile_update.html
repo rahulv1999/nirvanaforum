@@ -3,25 +3,35 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-<header class="py-5 bg-light border-bottom mb-4">
+<header class="py-5 border-bottom mb-4" id="head" >
     <div class="container">
         <div class="text-center my-5">
             <h1 class="fw-bolder">{{title}} Update profile </h1>
         </div>
     </div>
 </header>
-    <div class="col-4 offset-4 mb-5">
-        <h3> </h3>
-        <form action="." method="POST"  enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form|crispy }}
 
-            <button class="btn btn-primary mt-2" type="submit" style="background-color: #d2d6a8;
-            border: #d2d6a8;">Save</button>
-        </form>
-        
-    </div>
-    
+<div class="container">
+        <div class="col align-self-center" style="width: fit-content;">
+            <img src="{{dpurl}}" class="rounded-circle" style="width: 200px;height: 200px;" >
+        </div>
+ 
+
+        <div class="col-md-4 align-items-center">
+            <form action="." method="POST"  enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button class="btn btn-primary mt-2" type="submit" style="background-color: #d2d6a8;
+                border: #d2d6a8;">Save</button>
+            </form>
+        </div>
+   
 </div>
 
+<script>
+    let s = document.getElementById("body")
+    s.style.backgroundColor = "#87a08b"
+     s = document.getElementById("head")
+    s.style.backgroundColor = "#87a08b"
+    </script>
 {% endblock content %}

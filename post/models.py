@@ -21,6 +21,8 @@ class Account(models.Model):
     )
     twitter_Username = models.CharField(default="",blank=True,max_length=100)
     profile_picture = models.ImageField(blank=True)
+    visible_email = models.BooleanField(default=True)
+    visible_twitter = models.BooleanField(default=True)
     def __str__(self):
         return self.user.username
     
@@ -43,16 +45,15 @@ class Account(models.Model):
         return None
     
 
-
 class PostLike(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    post = models.OneToOneField('Post', on_delete=models.CASCADE)
-    gender = models.CharField(
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey('Post', on_delete=models.CASCADE)
+    like = models.CharField(
         max_length=10,
         choices=[('like', 'like'), 
                 ('neutral','neutral'),
                 ('dislike','dislike')]
-    )
+    ,default='neutral')
 
     def __str__(self):
         return self.post.title
@@ -121,6 +122,10 @@ class Post(models.Model):
     def total_user(self):
         return User.objects.count()
 
+    @property
+    def get_categories(self):
+        return [ i for i in self.categories.all()]
+
     
 
 class Images(models.Model):
@@ -169,10 +174,10 @@ class Comment(models.Model):
 
 class homeData(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
-    btc = models.DecimalField(max_digits=15,decimal_places=3)
-    eth = models.DecimalField(max_digits=15,decimal_places=3)
-    eur = models.DecimalField(max_digits=15,decimal_places=3)
-    gbp = models.DecimalField(max_digits=15,decimal_places=3)
+    btc = models.FloatField()
+    eth = models.FloatField()
+    eur = models.FloatField()
+    gbp = models.FloatField()
 
     def __str__(self):
         return self.timestamp

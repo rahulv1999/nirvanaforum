@@ -6,27 +6,70 @@
 <header class="py-5 border-bottom mb-4" id="head" >
     <div class="container">
         <div class="text-center my-5">
-            <h1 class="fw-bolder">{{title}} Update profile </h1>
+            <h1 class="fw-bolder">{{title}} User profile </h1>
         </div>
     </div>
 </header>
 
-<div class="container">
-        <div class="col align-self-center" style="width: fit-content;">
-            <img src="{{dpurl}}" class="rounded-circle" style="width: 200px;height: 200px;" >
+
+<div class="d-flex justify-content-center">
+
+    <div class="row" style="min-height: 40vh;">
+        <div class="col-md-4 me-4" >
+            <img src="{{profiledp}}" class="rounded-circle" style="width: 200px;height: 200px;" >
         </div>
  
-
-        <div class="col-md-4 align-items-center">
+        <div class="col-md-6 ms-5">
+            <p>Username : {{account.user.username}}</p>
+            <p>Joined since : {{account.user.date_joined|timesince}}</p>
+            {% if request.user.id == account.user.id %}
             <form action="." method="POST"  enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form|crispy }}
-                <button class="btn btn-primary mt-2" type="submit" style="background-color: #d2d6a8;
+                <button class="btn btn-primary my-2" type="submit" style="background-color: #d2d6a8;
                 border: #d2d6a8;">Save</button>
             </form>
+            {% else %}
+
+            {% if account.visible_email %}
+            <p>Email : {{account.user.email}}</p>
+            {% endif %}
+
+            {% if account.visible_twitter %}
+            <p>Twitter username : {{account.twitter_Username}}</p>
+            {% endif %}
+
+            <p>Gender : {{account.gender}}</p>
+
+            {% endif %}
         </div>
-   
+    </div>
+    
 </div>
+<hr>
+{% if queryset|length > 0 %}
+<div class="text-center my-5">
+    <h3>Posts by User</h3>
+</div>
+
+<div>
+    {% for object in queryset %}
+        
+        <div class=" m-1 p-0 bg-ligh ">
+            <a class="" href="{{ object.get_absolute_url }}" 
+            style="color: inherit;">
+            <div class=" text-capitalize text-center">
+                <h5 class="card-title">{{object.title}}</h5>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<div class="text-center my-5">
+    <h5>No posts yet by user</h5>
+</div>
+{% endif%}
 
 <script>
     let s = document.getElementById("body")

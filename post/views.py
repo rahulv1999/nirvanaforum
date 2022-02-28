@@ -15,7 +15,7 @@ import pytz
 import json
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-
+from decimal import *
 
 User = get_user_model()
 post_per_page = 10
@@ -95,41 +95,47 @@ def blog(request):
         d = c.get_rates('USD')
         btc = san.get("ohlc/bitcoin").tail().iloc[4,0]
         eth = san.get("ohlc/ethereum").tail().iloc[4,0]
-        btc = btc,
-        eth = eth,
-        eur = d['EUR'],
+        btc = btc
+        eth = eth
+        eur = d['EUR']
         gbp = d['GBP']
+        
         homeData.objects.create(
             btc = btc,
             eth = eth,
-            eur = d['EUR'],
-            gbp = d['GBP']
+            eur = eur,
+            gbp = gbp
         )
+        gbp = round(gbp,2)
+        eur = round(eur,2)
+        btc = round(btc,2)
+        eth = round(eth,2)
     else :
         if (datetime.now(pytz.UTC) - homedata[0].timestamp).total_seconds() > 60*60*24:
             c = CurrencyRates()
             d = c.get_rates('USD')
             btc = san.get("ohlc/bitcoin").tail().iloc[4,0]
             eth = san.get("ohlc/ethereum").tail().iloc[4,0]
-            btc = btc,
-            eth = eth,
-            eur = d['EUR'],
+            btc = btc
+            eth = eth
+            eur = d['EUR']
             gbp = d['GBP']
+
             homeData.objects.create(
                 btc = btc,
                 eth = eth,
-                eur = d['EUR'],
-                gbp = d['GBP']
+                eur = eur,
+                gbp = gbp
             )
+            gbp = round(gbp,2)
+            eur = round(eur,2)
+            btc = round(btc,2)
+            eth = round(eth,2)
         else :
-            # btc = json.dumps(float(homedata[0].btc))
-            # eth = json.dumps(float(homedata[0].eth))
-            # eur = json.dumps(float(homedata[0].eur))
-            # gbp = json.dumps(float(homedata[0].gbp))
             gbp = round(1/homedata[0].gbp,2)
             eur = round(1/homedata[0].eur,2)
-            btc = homedata[0].btc
-            eth = homedata[0].eth
+            eth = round(homedata[0].eth,2)
+            btc = round(homedata[0].btc,2)
 
 
     currency = [eur,gbp,btc,eth,today]
@@ -155,7 +161,7 @@ def blog(request):
 
 @login_required
 def post(request,id):
-    post = get_list_or_404(Post, id=id)[0]
+    post = get_object_or_404(Post, id=id)
     form = CommentForm(request.POST or None)
     thumbnail = Images.objects.filter(post=post)
     
@@ -311,18 +317,32 @@ def register(request):
 def profile_update(request,id):
     user  = get_object_or_404(User,id=id)
     account = get_object_or_404(Account,user = user)
-    form = ProfileUpdateForm(request.POST or None, request.FILES or None,instance=account)
+    author = Author.objects.filter(user=user)
+    form = ProfileUpdateForm(request.POST or None, request.FILES or None,instance=account,initial={'email':user.email})
+    profiledp =  Account.objects.filter(user=user,profile_picture__isnull=False).exclude(profile_picture__exact='')
+    if len(author):
+        queryset = Post.objects.filter(author=author[0])
+    else :
+        queryset = []
+
+    if len(profiledp):
+        profiledp = profiledp[0].profile_picture.url
+    else :
+        profiledp = "/media/profile.png"
 
     if request.method == "POST":
         if form.is_valid():
             form.instance.user = request.user
+            form.instance.user.email = form.cleaned_data["email"]
             form.save()
             return redirect(reverse("post-list"))
     
     context = {
         'form' : form,
         'dpurl' :  get_dpurl(request),
-        'user' : user
+        'profiledp' :  profiledp,
+        'account' : account,
+        'queryset' : queryset
     }
     return render(request,'profile_update.html',context)
         

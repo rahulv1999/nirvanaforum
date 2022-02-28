@@ -39,6 +39,13 @@
         height: 100%;
         object-fit: cover;
     }
+    
+
+    a {
+        color: inherit;
+        text-decoration : none !important;
+    }
+
     </style>
     <!-- Page header with logo and tagline-->
     <header class="py-5 border-bottom " style="background-color: #87a08b;">
@@ -59,7 +66,13 @@
                     </div>
                     <div class="card-body">
                         <div class="small text-muted">{{ post.timestamp|timesince }} ago</div>
-                        <div class="small text-muted">by {{ post.author }}</div>
+                        <div class="small text-muted"><a href="{% url 'profile-update' id=post.author.user.id %}">by {{ post.author }}</a></div>
+                        <div class="small text-muted">
+                        {% for category in post.get_categories %}
+                        
+                        <a href="{% url 'blog-cat' id=category.id %}">#{{category.title}}</a>
+                        {% endfor %}
+                        </div>
                         <h4 class="card-title">{{ post.title }}</h4>
                         {{ post.content|safe }}
                     </div>
@@ -106,7 +119,8 @@
                                          
                                       </svg> 
                                     {% endif %}
-                                    <strong>{{ comment.user.username }} {% if comment.get_gender == 'MALE' %}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-male" viewBox="0 0 16 16">
+                                    <strong><a href="{% url 'profile-update' id=comment.user.id %}">{{ comment.user.username }}</a>  
+                                        {% if comment.get_gender == 'MALE' %}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-male" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2H9.5zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
                                       </svg>
                                     {% else %}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-female" viewBox="0 0 16 16">
@@ -158,7 +172,7 @@
                                     <div class="small text-muted">{{ reply.timestamp|timesince }} ago</div>
                                     <p class="card-text" style="margin-bottom: -0.25%;">
                                         {% if reply.get_dp %}
-                                    <img src="{{reply.get_dp.url}}" alt="" class="rounded-circle" style="width: 30px; height: 30px;">
+                                   <a href="{% url 'profile-update' id=reply.user.id %}"><img src="{{reply.get_dp.url}}" alt="" class="rounded-circle" style="width: 30px; height: 30px;">
                                     {% endif %}
                                     {% if not reply.get_dp %}
                                     <img src="/media/profile.png" alt="" class="rounded-circle" style="width: 30px;">
@@ -169,7 +183,7 @@
                                         {% else %}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-female" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd" d="M8 1a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5z"/>
                                           </svg>
-                                        {% endif %}{{ reply.user.username }}</strong>:
+                                        {% endif %}{{ reply.user.username }}</a> </strong>:
                                     </p>
                                     {{ reply.content }}
                                 </div>

@@ -15,7 +15,7 @@
 
 <!-- Page header with logo and tagline-->
 <header class="py-5  border-bottom mb-4" style="background-color: #87a08b;">
-    
+    {% if flag %}
     <div class="row">
         <div class="col-md-2 mx-2 text-center">
             <table class="table">
@@ -50,6 +50,7 @@
                 </tr>
             </table>
     </div>
+    {% endif %}
     <div class="container col-md-8">
         <div class="text-center my-5">
             <h1 class="fw-bolder">{{message}}</h1>
@@ -87,9 +88,11 @@
 
 <div class="container" >
     <div class="" >
+        {% if flag %}
         <div class="text-center my-5">
             <h1 class="fw-bolder">Featured Post</h1>
         </div>
+        {% endif %}
         <!-- Blog entries-->
         <div class="">
 

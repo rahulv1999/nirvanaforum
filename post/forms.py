@@ -51,26 +51,38 @@ class CommentForm(forms.ModelForm):
 
 class ProfileUpdateForm(forms.ModelForm):
     gender = forms.ChoiceField(choices=[('MALE', 'MALE'), ('FEMALE','FEMALE')],required=True)
+    email = forms.EmailField(required=False)
     twitter_Username = forms.CharField(max_length=100,required=False)
     profile_picture = forms.ImageField(required=False)
+    visible_email = forms.BooleanField(required=False,label="Email Visibility")
+    visible_twitter = forms.BooleanField(required=False,label="Twitter username Visibility")
     class Meta:
         model = Account
-        fields = ("gender","twitter_Username","profile_picture")
+        fields = ("email","gender","twitter_Username","profile_picture","visible_email","visible_twitter")
+
 
     def save(self, commit=True):
-        user = super(ProfileUpdateForm, self).save(commit=False)
-        user.gender = self.cleaned_data["gender"]
-        user.twitter_Username = self.cleaned_data["twitter_Username"]
-        user.profile_picture = self.cleaned_data["profile_picture"]
+        account = super(ProfileUpdateForm, self).save(commit=False)
+        
+        account.gender = self.cleaned_data["gender"]
+        account.twitter_Username = self.cleaned_data["twitter_Username"]
+        account.profile_picture = self.cleaned_data["profile_picture"]
+        User.objects.filter(id=account.user.id).update(email=self.cleaned_data["email"])
+        # user.email = self.cleaned_data["email"]
+        print(self.cleaned_data["profile_picture"])
+        if not self.cleaned_data["profile_picture"]:
+            account.profile_picture = ''
+        account.visible_email = self.cleaned_data["visible_email"]
+        account.visible_twitter = self.cleaned_data["visible_twitter"]
         try:
-            img = Image.open(user.profile_picture.path)
+            img = Image.open(account.profile_picture.path)
             if img.height>500 or img.weight>500:
                 output_size = (200,200)
                 img.thumbnail(output_size)
-                img.save(user.profile_picture.path)
+                img.save(account.profile_picture.path)
         except:
             pass
         if commit:
-            user.save()
-        return user
+            account.save()
+        return account
 
